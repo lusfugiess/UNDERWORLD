@@ -7,24 +7,42 @@ public class Player : MonoBehaviour
 {
     public int initialLives = 10;
     public float damageRadius = 3f;
+    public float catchRadius = 5f;
     public float damageInterval = 15f;
+    public float catchInterval = 15f;
+
+    public int currentRabbits = 0;
     public TextMeshProUGUI livesText;
     public TextMeshProUGUI deathText;
+    public TextMeshProUGUI rabbitsCaughtText;
 
     private int currentLives;
     private bool canTakeDamage = true;
+    private bool canCatchRabbit = true;
+    private int rabbitsCaught = 0;
+    private bool isPlayerAlive = true;
+    public int rabbitsToWin = 5;
 
     private void Start()
     {
         currentLives = initialLives;
         UpdateLivesText();
+        rabbitsCaught = currentRabbits;
+        UpdateRabbitsCaughtText();
     }
 
     private void Update()
     {
-        if (canTakeDamage)
+        if (isPlayerAlive)
         {
-            CheckBadGuyCollisions();
+            if (canTakeDamage)
+            {
+                CheckBadGuyCollisions();
+            }
+            else if (canCatchRabbit)
+            {
+                CheckRabbitCollisions();
+            }
         }
     }
 
@@ -44,8 +62,44 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void CheckRabbitCollisions()
+    {
+        GameObject[] rabbits = GameObject.FindGameObjectsWithTag("Rabbit");
+        foreach (GameObject rabbit in rabbits)
+        {
+            float distance = Vector3.Distance(transform.position, rabbit.transform.position);
+
+            if (distance <= catchRadius)
+            {
+                CaughtRabbit();
+                break;
+            }
+        }
+    }
+
+    private void CaughtRabbit()
+    {
+        rabbitsCaught++;
+        canCatchRabbit = false;
+        UpdateRabbitsCaughtText();
+
+        if (rabbitsCaught >= rabbitsToWin)
+        {
+            Won();
+        }
+        else
+        {
+            Invoke("EnableCatch", catchInterval);
+        }
+    }
+
     private void TakeDamage()
     {
+        if (!isPlayerAlive)
+        {
+            return; 
+        }
+
         currentLives--;
         canTakeDamage = false;
         UpdateLivesText();
@@ -65,14 +119,30 @@ public class Player : MonoBehaviour
         canTakeDamage = true;
     }
 
+    private void EnableCatch()
+    {
+        canCatchRabbit = true;
+    }
+
     private void Die()
     {
+        isPlayerAlive = false;
         deathText.text = "Player has died!";
-        // Implement your game over logic here
+    }
+
+    private void Won()
+    {
+        isPlayerAlive = false;
+        deathText.text = "Player has won!";
     }
 
     private void UpdateLivesText()
     {
         livesText.text = "Lives: " + currentLives;
+    }
+
+    private void UpdateRabbitsCaughtText()
+    {
+        rabbitsCaughtText.text = "Rabbits Caught: " + rabbitsCaught;
     }
 }

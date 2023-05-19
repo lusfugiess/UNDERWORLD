@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class Rabbit : MonoBehaviour
 {
@@ -11,20 +10,16 @@ public class Rabbit : MonoBehaviour
     public float maxMovementDistance = 15f;
     public float minMovementSpeed = 3f;
     public float maxMovementSpeed = 6f;
-    public float catchRadius = 3f;
-    public float catchTime = 2f;
-    public TextMeshProUGUI rabbitsCaughtText;
 
     private Vector3 randomTargetPosition;
     private float currentMovementSpeed;
     private bool isMoving = true;
-    private int rabbitsCaught = 0;
-    private bool isBeingCaught = false;
 
     private void Start()
     {
         GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
+        StartMovement();
     }
 
     private void Update()
@@ -39,6 +34,22 @@ public class Rabbit : MonoBehaviour
         }
     }
 
+    private void StartMovement()
+    {
+        GenerateRandomTargetPosition();
+        GenerateRandomMovementSpeed();
+        isMoving = true;
+    }
+
+    private void CaughtByPlayer()
+    {
+        isMoving = false;
+
+        GenerateRandomTargetPosition();
+
+        Invoke("RestartMovement", Random.Range(minPauseTime, maxPauseTime));
+    }
+
     private void MoveToTargetPosition()
     {
         Vector3 direction = randomTargetPosition - transform.position;
@@ -50,30 +61,32 @@ public class Rabbit : MonoBehaviour
         }
         else
         {
-            transform.position += direction.normalized * currentMovementSpeed * Time.deltaTime;
+            Vector3 movement = direction.normalized * currentMovementSpeed * Time.deltaTime;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, movement, out hit, movement.magnitude))
+            {
+               
+                Vector3 avoidanceDirection = Vector3.Reflect(movement.normalized, hit.normal);
+                movement = avoidanceDirection * currentMovementSpeed * Time.deltaTime;
+            }
+
+            transform.position += movement;
         }
     }
 
     private void PauseAtTargetPosition()
     {
-        if (isBeingCaught)
-        {
-            catchTime -= Time.deltaTime;
-            if (catchTime <= 0f)
-            {
-                Caught();
-            }
-        }
+     
     }
 
     private void StartPause()
     {
         isMoving = false;
         float pauseTime = Random.Range(minPauseTime, maxPauseTime);
-        Invoke("StartMovement", pauseTime);
+        Invoke("RestartMovement", pauseTime);
     }
 
-    private void StartMovement()
+    private void RestartMovement()
     {
         GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
@@ -90,43 +103,5 @@ public class Rabbit : MonoBehaviour
     private void GenerateRandomMovementSpeed()
     {
         currentMovementSpeed = Random.Range(minMovementSpeed, maxMovementSpeed);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player") && !isBeingCaught)
-        {
-            isBeingCaught = true;
-            catchTime = 2f;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isBeingCaught = false;
-        }
-    }
-
-    private void Caught()
-    {
-        isBeingCaught = false;
-        rabbitsCaught++;
-        rabbitsCaughtText.text = "Rabbits Caught: " + rabbitsCaught.ToString();
-        DespawnRabbit();
-    }
-
-    private void DespawnRabbit()
-    {
-      
-        float randomX = Random.Range(-maxMovementDistance, maxMovementDistance);
-        float randomZ = Random.Range(-maxMovementDistance, maxMovementDistance);
-        transform.position = new Vector3(randomX, 0f, randomZ);
-
-       
-        GenerateRandomTargetPosition();
-        GenerateRandomMovementSpeed();
-        isMoving = true;
     }
 }
