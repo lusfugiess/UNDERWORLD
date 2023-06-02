@@ -10,18 +10,20 @@ public class Player : MonoBehaviour
     public float catchRadius = 5f;
     public float damageInterval = 15f;
     public float catchInterval = 15f;
+    public float rabbitHideDuration = 20f;
+    public float nextLifeCooldown = 10f;
 
     public int currentRabbits = 0;
     public TextMeshProUGUI livesText;
+    public TextMeshProUGUI triggerText;
     public TextMeshProUGUI deathText;
     public TextMeshProUGUI rabbitsCaughtText;
 
     private int currentLives;
     private bool canTakeDamage = true;
-    private bool canCatchRabbit = true;
-    private int rabbitsCaught = 0;
     private bool isPlayerAlive = true;
-    public int rabbitsToWin = 5;
+    private int rabbitsCaught = 0;
+    private int rabbitsToWin = 5;
 
     private void Start()
     {
@@ -29,6 +31,7 @@ public class Player : MonoBehaviour
         UpdateLivesText();
         rabbitsCaught = currentRabbits;
         UpdateRabbitsCaughtText();
+        triggerText.text = "Catch all rabbits, avoid the bugs! Press E to catch a rabbit!";
     }
 
     private void Update()
@@ -39,10 +42,11 @@ public class Player : MonoBehaviour
             {
                 CheckBadGuyCollisions();
             }
-            else if (canCatchRabbit)
-            {
-                CheckRabbitCollisions();
-            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CheckRabbitCollisions();
         }
     }
 
@@ -64,44 +68,52 @@ public class Player : MonoBehaviour
 
     private void CheckRabbitCollisions()
     {
-        GameObject[] rabbits = GameObject.FindGameObjectsWithTag("Rabbit");
-        foreach (GameObject rabbit in rabbits)
-        {
-            float distance = Vector3.Distance(transform.position, rabbit.transform.position);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, catchRadius);
 
-            if (distance <= catchRadius)
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Rabbit"))
             {
-                CaughtRabbit();
+                CatchRabbit(collider.gameObject);
                 break;
             }
         }
     }
 
-    private void CaughtRabbit()
+    private void CatchRabbit(GameObject rabbit)
     {
-        rabbitsCaught++;
-        canCatchRabbit = false;
-        UpdateRabbitsCaughtText();
+        float distance = Vector3.Distance(transform.position, rabbit.transform.position);
 
-        if (rabbitsCaught >= rabbitsToWin)
+        if (distance <= catchRadius)
         {
-            Won();
+            rabbit.SetActive(false);
+            rabbitsCaught++;
+            UpdateRabbitsCaughtText();
+
+            if (rabbitsCaught >= rabbitsToWin)
+            {
+                Won();
+            }
+
+            StartCoroutine(ShowRabbitAfterDelay(rabbit));
         }
-        else
-        {
-            Invoke("EnableCatch", catchInterval);
-        }
+    }
+
+    private IEnumerator ShowRabbitAfterDelay(GameObject rabbit)
+    {
+        yield return new WaitForSeconds(rabbitHideDuration);
+
+        rabbit.SetActive(true);
     }
 
     private void TakeDamage()
     {
         if (!isPlayerAlive)
         {
-            return; 
+            return;
         }
 
         currentLives--;
-        canTakeDamage = false;
         UpdateLivesText();
 
         if (currentLives <= 0)
@@ -110,18 +122,14 @@ public class Player : MonoBehaviour
         }
         else
         {
-            Invoke("EnableDamage", damageInterval);
+            canTakeDamage = false;
+            Invoke("EnableDamage", nextLifeCooldown);
         }
     }
 
     private void EnableDamage()
     {
         canTakeDamage = true;
-    }
-
-    private void EnableCatch()
-    {
-        canCatchRabbit = true;
     }
 
     private void Die()

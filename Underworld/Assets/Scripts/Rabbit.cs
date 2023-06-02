@@ -6,37 +6,34 @@ public class Rabbit : MonoBehaviour
 {
     public float minPauseTime = 2f;
     public float maxPauseTime = 5f;
-    public float minMovementDistance = 5f;
-    public float maxMovementDistance = 15f;
     public float minMovementSpeed = 3f;
     public float maxMovementSpeed = 6f;
+    public float detectionRadius = 5f;
+    public float speedMultiplier = 2f;
 
-    private Vector3 randomTargetPosition;
     private float currentMovementSpeed;
     private bool isMoving = true;
+    private Transform player;
 
     private void Start()
     {
-        GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
         StartMovement();
+
+        // Find the player object by tag
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Update()
     {
         if (isMoving)
         {
-            MoveToTargetPosition();
-        }
-        else
-        {
-            PauseAtTargetPosition();
+            MoveRandomly();
         }
     }
 
     private void StartMovement()
     {
-        GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
         isMoving = true;
     }
@@ -45,59 +42,54 @@ public class Rabbit : MonoBehaviour
     {
         isMoving = false;
 
-        GenerateRandomTargetPosition();
-
         Invoke("RestartMovement", Random.Range(minPauseTime, maxPauseTime));
     }
 
-    private void MoveToTargetPosition()
+    private void MoveRandomly()
     {
-        Vector3 direction = randomTargetPosition - transform.position;
-        direction.y = 0f;
+        Vector3 movement = transform.forward * currentMovementSpeed * Time.deltaTime;
+        movement.y = 0f; // Set vertical component to zero
 
-        if (direction.magnitude <= 0.1f)
+        // Rotate towards the movement direction
+        transform.rotation = Quaternion.LookRotation(movement);
+
+        // Check if player is nearby
+        if (player != null && Vector3.Distance(transform.position, player.position) <= detectionRadius)
         {
-            StartPause();
+            // Calculate the direction away from the player
+            Vector3 awayFromPlayer = transform.position - player.position;
+            awayFromPlayer.y = 0f; // Set vertical component to zero
+
+            // Speed up and move away from the player
+            movement = awayFromPlayer.normalized * currentMovementSpeed * speedMultiplier * Time.deltaTime;
+            transform.rotation = Quaternion.LookRotation(awayFromPlayer); // Rotate towards the away direction
         }
-        else
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, movement, out hit, movement.magnitude))
         {
-            Vector3 movement = direction.normalized * currentMovementSpeed * Time.deltaTime;
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, movement, out hit, movement.magnitude))
+            if (hit.collider.CompareTag("maze"))
             {
-               
-                Vector3 avoidanceDirection = Vector3.Reflect(movement.normalized, hit.normal);
-                movement = avoidanceDirection * currentMovementSpeed * Time.deltaTime;
+                // Change movement direction
+                Vector3 newDirection = Quaternion.Euler(0, Random.Range(0f, 360f), 0) * transform.forward;
+                movement = newDirection.normalized * currentMovementSpeed * Time.deltaTime;
+                transform.rotation = Quaternion.LookRotation(newDirection); // Rotate towards the new direction
             }
-
-            transform.position += movement;
+            else if (hit.collider.CompareTag("Player"))
+            {
+                // The rabbit was caught by the player
+                CaughtByPlayer();
+                return;
+            }
         }
-    }
 
-    private void PauseAtTargetPosition()
-    {
-     
-    }
-
-    private void StartPause()
-    {
-        isMoving = false;
-        float pauseTime = Random.Range(minPauseTime, maxPauseTime);
-        Invoke("RestartMovement", pauseTime);
+        transform.position += movement;
     }
 
     private void RestartMovement()
     {
-        GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
         isMoving = true;
-    }
-
-    private void GenerateRandomTargetPosition()
-    {
-        float randomX = Random.Range(-maxMovementDistance, maxMovementDistance);
-        float randomZ = Random.Range(-maxMovementDistance, maxMovementDistance);
-        randomTargetPosition = new Vector3(randomX, 0f, randomZ);
     }
 
     private void GenerateRandomMovementSpeed()

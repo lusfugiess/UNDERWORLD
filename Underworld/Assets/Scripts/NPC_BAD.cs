@@ -4,70 +4,100 @@ using UnityEngine;
 
 public class NPC_BAD : MonoBehaviour
 {
-    public Transform playerTransform;
-    public float followRadius = 2f;
-    public float stopRadius = 1f;
-    public float minMovementSpeed = 3f;
-    public float maxMovementSpeed = 6f;
-    public float randomMovementRadius = 5f;
+    public string playerTag = "Player";
+    public float followRadius = 50f;
+    public float stopDuration = 10f;
+    public float moveSpeed = 6f;
+    public float randomMovementRadius = 100f;
 
-    private bool isFollowingPlayer = false;
+    private Transform playerTransform;
     private Vector3 randomTargetPosition;
     private float currentMovementSpeed;
+    private bool isFollowingPlayer = false;
+    private bool isStopped = false;
 
     private void Start()
     {
+        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+        if (player != null)
+        {
+            playerTransform = player.transform;
+        }
+        else
+        {
+            Debug.LogError("Player object with tag '" + playerTag + "' not found!");
+        }
+
         GenerateRandomTargetPosition();
         GenerateRandomMovementSpeed();
     }
 
     private void Update()
     {
-        float distance = Vector3.Distance(transform.position, playerTransform.position);
-
-        if (distance <= followRadius)
+        if (playerTransform != null)
         {
-            isFollowingPlayer = true;
-            MoveTowardsPlayer();
-        }
-        else if (distance > followRadius && isFollowingPlayer)
-        {
-            isFollowingPlayer = false;
-            GenerateRandomTargetPosition();
-            GenerateRandomMovementSpeed();
+            float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+            if (distance <= followRadius)
+            {
+                isFollowingPlayer = true;
+                MoveTowardsPlayer();
+            }
+            else if (distance > followRadius && isFollowingPlayer)
+            {
+                isFollowingPlayer = false;
+                GenerateRandomTargetPosition();
+                GenerateRandomMovementSpeed();
+            }
         }
 
-        if (!isFollowingPlayer)
+        if (!isFollowingPlayer && !isStopped)
         {
             MoveRandomly();
         }
     }
 
- private void MoveTowardsPlayer()
-{
-    float distance = Vector3.Distance(transform.position, playerTransform.position);
-
-    if (distance > stopRadius)
+    private void MoveTowardsPlayer()
     {
-        Vector3 direction = playerTransform.position - transform.position;
-        direction.y = 0f; 
-        transform.position += direction.normalized * currentMovementSpeed * Time.deltaTime;
-    }
-}
+        if (playerTransform == null)
+        {
+            return;
+        }
 
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distance > followRadius)
+        {
+            GenerateRandomMovementSpeed();
+        }
+
+        Vector3 direction = playerTransform.position - transform.position;
+        direction.y = 0f;
+        transform.position += direction.normalized * currentMovementSpeed * Time.deltaTime;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 360f);
+        }
+    }
 
     private void MoveRandomly()
     {
-        Vector3 direction = randomTargetPosition - transform.position;
-        direction.y = 0f; 
-
-        if (direction.magnitude <= 0.1f)
+        if (randomTargetPosition == null || Vector3.Distance(transform.position, randomTargetPosition) <= 0.1f)
         {
             GenerateRandomTargetPosition();
+            StartCoroutine(StopForDuration(stopDuration));
         }
-        else
+
+        Vector3 direction = randomTargetPosition - transform.position;
+        direction.y = 0f;
+        transform.position += direction.normalized * currentMovementSpeed * Time.deltaTime;
+
+        if (direction != Vector3.zero)
         {
-            transform.position += direction.normalized * currentMovementSpeed * Time.deltaTime;
+            Quaternion toRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 360f);
         }
     }
 
@@ -80,6 +110,13 @@ public class NPC_BAD : MonoBehaviour
 
     private void GenerateRandomMovementSpeed()
     {
-        currentMovementSpeed = Random.Range(minMovementSpeed, maxMovementSpeed);
+        currentMovementSpeed = moveSpeed;
+    }
+
+    private IEnumerator StopForDuration(float duration)
+    {
+        isStopped = true;
+        yield return new WaitForSeconds(duration);
+        isStopped = false;
     }
 }

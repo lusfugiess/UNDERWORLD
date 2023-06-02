@@ -7,6 +7,7 @@ TagManager:
   - badguy
   - Text
   - Rabbit
+  - maze
   layers:
   - Default
   - TransparentFX
