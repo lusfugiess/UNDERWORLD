@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class Player : MonoBehaviour
@@ -48,6 +49,16 @@ public class Player : MonoBehaviour
         {
             CheckRabbitCollisions();
         }
+
+        if (rabbitsCaught >= rabbitsToWin)
+        {
+            Won();
+        }
+
+        if (currentLives <= 0)
+        {
+            Die();
+        }
     }
 
     private void CheckBadGuyCollisions()
@@ -90,11 +101,6 @@ public class Player : MonoBehaviour
             rabbitsCaught++;
             UpdateRabbitsCaughtText();
 
-            if (rabbitsCaught >= rabbitsToWin)
-            {
-                Won();
-            }
-
             StartCoroutine(ShowRabbitAfterDelay(rabbit));
         }
     }
@@ -136,12 +142,14 @@ public class Player : MonoBehaviour
     {
         isPlayerAlive = false;
         deathText.text = "Player has died!";
+        SceneManager.LoadScene("DIED");
     }
 
     private void Won()
     {
         isPlayerAlive = false;
         deathText.text = "Player has won!";
+        SceneManager.LoadScene("WIN");
     }
 
     private void UpdateLivesText()

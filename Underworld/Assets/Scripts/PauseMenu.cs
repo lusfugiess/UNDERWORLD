@@ -44,8 +44,8 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
     }
 
-    public void OnResumeButtonClicked()
+    public void QuitGame()
     {
-        ResumeGame();
+        Application.Quit();
     }
 }
