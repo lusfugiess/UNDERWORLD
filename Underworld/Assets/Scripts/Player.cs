@@ -28,6 +28,14 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+
+        
+        if(Cursor.visible){
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        }
+        
+        
         currentLives = initialLives;
         UpdateLivesText();
         rabbitsCaught = currentRabbits;
@@ -53,11 +61,21 @@ public class Player : MonoBehaviour
         if (rabbitsCaught >= rabbitsToWin)
         {
             Won();
+            if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
         }
 
         if (currentLives <= 0)
         {
             Die();
+            if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
         }
     }
 
@@ -125,6 +143,11 @@ public class Player : MonoBehaviour
         if (currentLives <= 0)
         {
             Die();
+             if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
         }
         else
         {

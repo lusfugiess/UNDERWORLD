@@ -29,11 +29,9 @@ public class StartScreen : MonoBehaviour
         if (!Cursor.visible)
         {
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
-        else
-        {
-            Cursor.visible = false;
-        }
-        Cursor.lockState = CursorLockMode.None;
+        
+        
     }
 }
