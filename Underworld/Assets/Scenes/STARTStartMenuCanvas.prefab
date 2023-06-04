@@ -31,7 +31,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7507331586696255134}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -168,7 +168,7 @@ RectTransform:
   m_Children:
   - {fileID: 7507331584988315971}
   m_Father: {fileID: 7507331586696255134}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -257,9 +257,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1840846800296278661, guid: e5b22f00f590e484cae219fee209da85, type: 3}
+      - m_Target: {fileID: 7507331586696255131}
         m_TargetAssemblyTypeName: StartScreen, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: PlayGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -268,7 +268,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 1
 --- !u!1 &7507331584988315968
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,6 +435,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3299488169832180090}
   - {fileID: 7507331586696255134}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -673,7 +674,7 @@ RectTransform:
   m_Children:
   - {fileID: 7507331586480773827}
   m_Father: {fileID: 7507331586696255134}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -762,7 +763,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1840846800296278661, guid: e5b22f00f590e484cae219fee209da85, type: 3}
+      - m_Target: {fileID: 7507331586696255131}
         m_TargetAssemblyTypeName: StartScreen, Assembly-CSharp
         m_MethodName: QuitGame
         m_Mode: 1
@@ -773,7 +774,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
 --- !u!1 &7507331586696255135
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,12 +806,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3299488169832180090}
   - {fileID: 7507331584951360393}
   - {fileID: 7507331584771470861}
   - {fileID: 7507331586550876908}
   m_Father: {fileID: 7507331585947219253}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -867,12 +867,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b6fbdcbd6fd3fe479044ef8f325d3d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSceneName: GameplayScene
 --- !u!1001 &3600007140977642725
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 7507331586696255134}
+    m_TransformParent: {fileID: 7507331585947219253}
     m_Modifications:
     - target: {fileID: 2035601096506140062, guid: e9a3a885ca246f545a39829b79941e5e, type: 3}
       propertyPath: m_Name
@@ -940,15 +941,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2035601096506140063, guid: e9a3a885ca246f545a39829b79941e5e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2035601096506140063, guid: e9a3a885ca246f545a39829b79941e5e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2035601096506140063, guid: e9a3a885ca246f545a39829b79941e5e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2035601096506140063, guid: e9a3a885ca246f545a39829b79941e5e, type: 3}
       propertyPath: m_AnchoredPosition.x

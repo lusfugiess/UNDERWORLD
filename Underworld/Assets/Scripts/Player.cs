@@ -149,7 +149,7 @@ public class Player : MonoBehaviour
     {
         isPlayerAlive = false;
         deathText.text = "Player has won!";
-        SceneManager.LoadScene("WIN");
+        SceneManager.LoadScene("WON");
     }
 
     private void UpdateLivesText()

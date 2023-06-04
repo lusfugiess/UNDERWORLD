@@ -33,4 +33,6 @@ sysinfo.txt
 
 # Builds
 *.apk
+
+# Exclude Unity packages
 *.unitypackage

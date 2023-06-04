@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 7507331585947219258}
   - component: {fileID: 7507331585947219259}
   - component: {fileID: 7507331585947219256}
+  - component: {fileID: -1930821726262323823}
   m_Layer: 5
   m_Name: DIEDStartMenuCanvas 1
   m_TagString: Untagged
@@ -505,6 +506,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &-1930821726262323823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7507331585947219257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13820159537e60f4fad92dd095485a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startMarker: {fileID: 0}
+  endMarker: {fileID: 0}
+  speed: 1
 --- !u!1 &7507331586480773824
 GameObject:
   m_ObjectHideFlags: 0
@@ -867,6 +883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b6fbdcbd6fd3fe479044ef8f325d3d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSceneName: GameplayScene
 --- !u!1001 &3600007140977642725
 PrefabInstance:
   m_ObjectHideFlags: 0

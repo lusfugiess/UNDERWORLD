@@ -3,22 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class StartScreen : MonoBehaviour
 {
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            StartGame();
-        }
+    public string gameSceneName = "GameplayScene";
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            QuitGame();
-        }
+    public void PlayGame()
+    {
+        SceneManager.LoadScene(gameSceneName);
     }
 
-    public void StartGame()
+    public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene("Sewer");
+        SceneManager.LoadScene(sceneName);
     }
 
     public void QuitGame()
@@ -28,5 +22,18 @@ public class StartScreen : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    private void Start()
+    {
+        if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.visible = false;
+        }
+        Cursor.lockState = CursorLockMode.None;
     }
 }
